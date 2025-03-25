@@ -78,7 +78,7 @@ async function writeSheet1(workbook, records) {
           "早出時間_請求",
           "人工数_請求",
           "取引種別",
-          // 経費関連列を追加
+          // 経費関連列
           "経費種類",
           "請求経費",
           "金額_経費",
