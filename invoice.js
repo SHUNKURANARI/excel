@@ -386,7 +386,8 @@
             worksheet.getCell(`A${rowNumber}`).alignment = { horizontal: 'center' }; // 中央揃え
 
             // 他の列の設定
-            worksheet.getCell(`B${rowNumber}`).value = entry.作業日;
+            worksheet.getCell(`B${rowNumber}`).value = new Date(entry.作業日);
+            worksheet.getCell(`B${rowNumber}`).numFmt = 'm"月"d"日"';
             worksheet.getCell(`C${rowNumber}`).value = entry.現場名;
             worksheet.getCell(`D${rowNumber}`).value = entry.日勤_夜勤;
             worksheet.getCell(`E${rowNumber}`).value = entry.職種_実績_請求;
@@ -490,7 +491,7 @@
 
         // データ行の罫線設定（最終行を除く）
         for (let row = startingRow; row < totalRow; row++) {
-            ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W'].forEach(column => {
+            ['A','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W'].forEach(column => {
                 const cell = worksheet.getCell(`${column}${row}`);
                 cell.border = {
                     top: borderStyle,
