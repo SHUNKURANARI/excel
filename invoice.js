@@ -1087,6 +1087,12 @@
   
   // キントーンのレコード詳細表示イベントに応答
   kintone.events.on('app.record.detail.show', function(event) {
+    // out_categoryが「請求書」でない場合は処理を終了
+    if (event.record["out_category"].value !== "請求書・常用") {
+      return;
+    }
+
+    // 既にボタンが存在する場合は処理を終了
     if (document.getElementById('export_excel_button')) return;
     
     const button = document.createElement('button');
