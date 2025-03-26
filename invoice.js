@@ -36,10 +36,7 @@
     "人工数_請求",
     "取引種別",
     "日勤_夜勤",
-    ,
-    "早出単価",
-    "残業単価"
-  
+    "単価調整_請求"
   ];
   
   // シート2用のヘッダー定義
@@ -65,7 +62,7 @@
             "レコード番号",
             "作業日",
             "現場名",
-            '職職種_実績_請求種',
+            '職種_実績_請求種',
             "顧客名",
             "郵便番号",
             "住所",
@@ -82,8 +79,8 @@
             "経費種類",
             "請求経費",
             "金額_経費",
-            "日勤_夜勤"
-  
+            "日勤_夜勤",
+            "単価調整_請求"
         ];
         
         worksheet.addRow(headers);
@@ -113,7 +110,9 @@
                         record["取引種別"].value,
                         expense.value["経費種類"]?.value || '',
                         expense.value["請求経費"]?.value || false,
-                        Number(expense.value["金額_経費"]?.value || 0)
+                        Number(expense.value["金額_経費"]?.value || 0),
+                        record["日勤_夜勤"].value,
+                        Number(record["単価調整_請求"]?.value || 0)
                     ]);
                 });
             } else {
@@ -136,7 +135,8 @@
                     Number(record["人工数_請求"].value),
                     record["取引種別"].value,
                     record["日勤_夜勤"].value,
-                    '', '', ''
+                    '', '', '',
+                    Number(record["単価調整_請求"]?.value || 0)
                 ]);
             }
         });
@@ -177,7 +177,7 @@
                 Number(record["人工数_請求"].value),
                 record["取引種別"].value,
                 record["日勤_夜勤"].value,
-                "" ,
+                Number(record["単価調整_請求"]?.value || 0),
                 { formula: `=J${rowNumber}/8*M${rowNumber}*1.25`, value: null },
                 { formula: `=J${rowNumber}/8*N${rowNumber}*1.25`, value: null }
             ]);
@@ -478,6 +478,15 @@
             cell.numFmt = '#,##0';
         });
 
+        // 単価調整_請求の合計を計算
+        const totalPriceAdjustment = records.reduce((sum, record) => {
+            return sum + Number(record["単価調整_請求"]?.value || 0);
+        }, 0);
+
+        // 単価調整_請求の合計を最終行のK列に設定
+        worksheet.getCell(`K${totalRow}`).value = totalPriceAdjustment;
+        worksheet.getCell(`K${totalRow}`).numFmt = '#,##0';
+
         // 罫線スタイルの定義
         const borderStyle = {
             style: 'thin',
@@ -722,6 +731,15 @@
             cell.numFmt = '#,##0';
         });
 
+        // 単価調整_請求の合計を計算
+        const totalPriceAdjustment = records.reduce((sum, record) => {
+            return sum + Number(record["単価調整_請求"]?.value || 0);
+        }, 0);
+
+        // 単価調整_請求の合計を最終行のR列に設定
+        worksheet.getCell(`R${totalRow}`).value = totalPriceAdjustment;
+        worksheet.getCell(`R${totalRow}`).numFmt = '#,##0';
+
         // 罫線スタイルの定義
         const borderStyle = {
             style: 'thin',
@@ -867,6 +885,15 @@
             };
             cell.numFmt = '#,##0';
         });
+  
+        // 単価調整_請求の合計を計算
+        const totalPriceAdjustment = records.reduce((sum, record) => {
+            return sum + Number(record["単価調整_請求"]?.value || 0);
+        }, 0);
+
+        // 単価調整_請求の合計を最終行のR列に設定
+        worksheet.getCell(`R${totalRow}`).value = totalPriceAdjustment;
+        worksheet.getCell(`R${totalRow}`).numFmt = '#,##0';
   
         // 罫線スタイルの定義
         const borderStyle = {
