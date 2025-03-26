@@ -822,7 +822,7 @@
             const rowNumber = startingRow + index;
             columns.forEach((column, colIndex) => {
                 worksheet.getCell(`${column}${rowNumber}`).value = {
-                    formula: `=SUMIFS(Sheet2!$O$2:$O$4000, Sheet2!$B$2:$B$4000, ${column}$2, Sheet2!C2:C4000, $A${rowNumber})`,
+                    formula: `=COUNTIFS(Sheet2!$B$2:$B$4000, ${column}$2, Sheet2!$C$2:$C$4000, $A${rowNumber}, Sheet2!$E$2:$E$4000, $B${rowNumber})`,
                     date1904: false
                 };
             });
@@ -930,7 +930,7 @@
         
         // appid24からレコードを取得
         const client = new KintoneRestAPIClient();
-        const condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" `;//and 取引種別 in("常用")
+        const condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_請求  != 0`;//and 取引種別 in("常用")
         
         debugLog('レコード取得を試みます', { condition });
         const records = await client.record.getAllRecords({
