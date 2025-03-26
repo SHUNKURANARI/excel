@@ -954,10 +954,28 @@
         const customerName = eventRecord["顧客名"].value;
         const startDate = eventRecord["開始日"].value;
         const endDate = eventRecord["終了日"].value;
+        const queryCategory = eventRecord["query_category"].value;
         
         // appid24からレコードを取得
         const client = new KintoneRestAPIClient();
-        const condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_請求  != 0`;//and 取引種別 in("常用")
+        
+        // query_categoryに応じて条件を分岐
+        let condition;
+        switch (queryCategory) {
+            case "常用":
+                condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_請求 != 0 and 取引種別 in("常用")`;
+                break;
+            case "請負(自)":
+                condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_請求 != 0 and 取引種別 in("請負(自)")`;
+                break;
+            case "請負(他)":
+                condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_請求 != 0 and 取引種別 in("請負(他)")`;
+                break;
+            case "すべて":
+            default:
+                condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_請求 != 0`;
+                break;
+        }
         
         debugLog('レコード取得を試みます', { condition });
         const records = await client.record.getAllRecords({
@@ -987,6 +1005,7 @@
         });
         
         if (records.length === 0) {
+            alert("指定された期間内に該当するデータがありません。\n以下の条件を確認してください：\n・顧客名\n・作業日（開始日～終了日）\n・取引種別\n・人工数_請求が0以外");
             throw new Error("該当するデータがありません");
         }
         
