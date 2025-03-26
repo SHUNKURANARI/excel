@@ -1116,9 +1116,32 @@
     
     const button = document.createElement('button');
     button.id = 'export_excel_button';
-    button.innerText = 'Excel出力';
+    button.innerText = '請求書出力';
     button.style.margin = '10px';
+    button.style.backgroundColor = '#2196F3'; // 青色に変更
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.padding = '8px 16px';
+    button.style.borderRadius = '4px';
+    button.style.cursor = 'pointer';
+    button.style.fontSize = '14px';
+    button.style.fontWeight = 'bold';
+    button.style.transition = 'all 0.3s ease';
+    button.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
     
+    // ホバー効果
+    button.onmouseover = function() {
+        this.style.backgroundColor = '#1976D2';
+        this.style.transform = 'translateY(-1px)';
+        this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+    };
+    
+    button.onmouseout = function() {
+        this.style.backgroundColor = '#2196F3';
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+    };
+
     button.onclick = async function() {
         try {
             const record = event.record;
