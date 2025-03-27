@@ -160,6 +160,7 @@
             const address_work = record["住所_作業員"].value;
             const buildingName = record["建物名_作業員"].value;
             
+            //お支払い通知書
             paymentSheet.getCell('C2').value = Name;
             paymentSheet.getCell('C5').value = postalCode;
             paymentSheet.getCell('C7').value = buildingName;
@@ -171,6 +172,30 @@
             paymentSheet.getCell('C43').value = account_name;
             paymentSheet.getCell('E41').value = branch_code;
             paymentSheet.getCell('E42').value = account_type;
+            //請求書
+            paymentSheet.getCell('O2').value = Name;        // C2 → O2 (+12)
+            paymentSheet.getCell('O5').value = postalCode;  // C5 → O5 (+12)
+            paymentSheet.getCell('O7').value = buildingName; // C7 → O7 (+12)
+            paymentSheet.getCell('O6').value = address_work; // C6 → O6 (+12)
+            paymentSheet.getCell('O8').value = tel;         // C8 → O8 (+12)
+            paymentSheet.getCell('O40').value = bank_name;  // C40 → O40 (+12)
+            paymentSheet.getCell('O41').value = branch_name; // C41 → O41 (+12)
+            paymentSheet.getCell('O42').value = account_number; // C42 → O42 (+12)
+            paymentSheet.getCell('O43').value = account_name; // C43 → O43 (+12)
+            paymentSheet.getCell('Q41').value = branch_code; // E41 → Q41 (+12)
+            paymentSheet.getCell('Q42').value = account_type; // E42 → Q42 (+12)
+            //相殺明細書
+            paymentSheet.getCell('AA2').value = Name;        // C2 → AA2 (+24)
+            paymentSheet.getCell('AA5').value = postalCode;  // C5 → AA5 (+24)
+            paymentSheet.getCell('AA7').value = buildingName; // C7 → AA7 (+24)
+            paymentSheet.getCell('AA6').value = address_work; // C6 → AA6 (+24)
+            paymentSheet.getCell('AA8').value = tel;         // C8 → AA8 (+24)
+            paymentSheet.getCell('AA40').value = bank_name;  // C40 → AA40 (+24)
+            paymentSheet.getCell('AA41').value = branch_name; // C41 → AA41 (+24)
+            paymentSheet.getCell('AA42').value = account_number; // C42 → AA42 (+24)
+            paymentSheet.getCell('AA43').value = account_name; // C43 → AA43 (+24)
+            paymentSheet.getCell('AC41').value = branch_code; // E41 → AC41 (+24)
+            paymentSheet.getCell('AC42').value = account_type; // E42 → AC42 (+24)
             
             return workbook;
         } catch (error) {

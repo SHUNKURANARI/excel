@@ -246,10 +246,26 @@
         const payment_cicle = record["支払いサイクル"].value;
         const payment_date = record["締め日"].value;
         const payment_deadline = record["支払い期限"].value;
+        const start_date = record["開始日"].value;
         const end_date = record["終了日"].value;
-  
+        
+        // 日付のフォーマット処理
+        function formatDateToJP(dateStr) {
+            const date = new Date(dateStr);
+            const year = date.getFullYear();
+            // 月と日は0埋めして2桁に
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}/${month}/${day}`;
+        }
+        
+        // フォーマット済みの日付を文字列として作成
+        const formattedStartDate = formatDateToJP(start_date);
+        const formattedEndDate = formatDateToJP(end_date);
+        const action_date = `${formattedStartDate} ～ ${formattedEndDate}`;
         
         invoiceSheet.getCell('C2').value = customerName;
+        invoiceSheet.getCell('C14').value = action_date;  // 日付範囲をC14に設定
         invoiceSheet.getCell('C5').value = postalCode;
         invoiceSheet.getCell('C6').value = address;
         invoiceSheet.getCell('C7').value = buildingName;
