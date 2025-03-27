@@ -36,7 +36,8 @@
         "人工数_支払",
         "取引種別",
         "日勤_夜勤",
-        "単価調整_支払_"
+        "単価調整_支払_",
+        "作業員検索"
     ];
 
     // シート1へのデータ書き込み関数
@@ -69,7 +70,8 @@
                 "金額_支払い",
                 "金額_支払い",
                 "日勤_夜勤",
-                "単価調整_支払_"
+                "単価調整_支払_",  
+                "作業員検索"
             ];
             
             worksheet.addRow(headers);
@@ -100,7 +102,8 @@
                             expense.value["金額_支払い"]?.value || false,
                             Number(expense.value["金額_支払い"]?.value || 0),
                             record["日勤_夜勤"].value,
-                            Number(record["単価調整_支払_"]?.value || 0)
+                            Number(record["単価調整_支払_"]?.value || 0),
+                            record["作業員検索"].value
                         ]);
                     });
                 } else {
@@ -123,7 +126,8 @@
                         record["取引種別"].value,
                         record["日勤_夜勤"].value,
                         '', '', '',
-                        Number(record["単価調整_支払_"]?.value || 0)
+                        Number(record["単価調整_支払_"]?.value || 0),
+                        record["作業員検索"].value
                     ]);
                 }
             });
@@ -183,7 +187,7 @@
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(templateFile);
             
-            const customerName = eventRecord["顧客名"].value;
+            const Name = eventRecord["person"].value;
             const startDate = eventRecord["開始日"].value;
             const endDate = eventRecord["終了日"].value;
             const queryCategory = eventRecord["query_category"].value;
@@ -195,17 +199,17 @@
             let condition;
             switch (queryCategory) {
                 case "常用":
-                    condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0 and 取引種別 in("常用")`;
+                    condition = `作業員検索 = "${Name}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0 and 取引種別 in("常用")`;
                     break;
                 case "請負(自)":
-                    condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0 and 取引種別 in("請負(自)")`;
+                    condition = `作業員検索 = "${Name}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0 and 取引種別 in("請負(自)")`;
                     break;
                 case "請負(他)":
-                    condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0 and 取引種別 in("請負(他)")`;
+                    condition = `作業員検索 = "${Name}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0 and 取引種別 in("請負(他)")`;
                     break;
                 case "すべて":
                 default:
-                    condition = `顧客名 = "${customerName}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0`;
+                    condition = `作業員検索 = "${Name}" and 作業日 >= "${startDate}" and 作業日 <= "${endDate}" and 人工数_支払 != 0`;
                     break;
             }
             
@@ -232,7 +236,8 @@
                     "取引種別",
                     "経費_支払い",
                     "日勤_夜勤",
-                    "単価調整_支払_"
+                    "単価調整_支払_",
+                    "作業員検索"
                 ]
             });
             
