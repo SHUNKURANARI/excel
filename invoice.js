@@ -108,8 +108,8 @@
                         Number(record["早出時間_請求"].value),
                         Number(record["人工数_請求"].value),
                         record["取引種別"].value,
-                        expense.value["経費種類"]?.value || '',
-                        expense.value["請求経費"]?.value || false,
+                        expense.value["経費種類_支払い"]?.value || '',
+                        Number(expense.value["単価_実績_支払"]?.value || 0),
                         Number(expense.value["金額_経費"]?.value || 0),
                         record["日勤_夜勤"].value,
                         Number(record["単価調整_請求"]?.value || 0)

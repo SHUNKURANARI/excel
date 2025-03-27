@@ -48,13 +48,13 @@
                 worksheet = workbook.addWorksheet('Sheet1');
             }
             
-            // ヘッダー行の作成
+            // ヘッダー行の作成 - 適切な順序に修正
             const headers = [
                 "レコード番号",
                 "作業日",
                 "現場名",
-                '職種_実績_支払',
                 "顧客名",
+                '職種_実績_支払',
                 "郵便番号",
                 "住所",
                 "tel",
@@ -67,8 +67,7 @@
                 "人工数_支払",
                 "取引種別",
                 "経費種類_支払い",
-                "金額_支払い",
-                "金額_支払い",
+                "単価_実績_支払",
                 "日勤_夜勤",
                 "単価調整_支払_",  
                 "作業員検索"
@@ -99,8 +98,7 @@
                             Number(record["人工数_支払"].value),
                             record["取引種別"].value,
                             expense.value["経費種類_支払い"]?.value || '',
-                            expense.value["金額_支払い"]?.value || false,
-                            Number(expense.value["金額_支払い"]?.value || 0),
+                            Number(expense.value["単価_実績_支払"]?.value || 0), // falseではなく数値を設定
                             record["日勤_夜勤"].value,
                             Number(record["単価調整_支払_"]?.value || 0),
                             record["作業員検索"].value
@@ -124,8 +122,9 @@
                         Number(record["早出時間_支払い"].value),
                         Number(record["人工数_支払"].value),
                         record["取引種別"].value,
+                        '',  // 経費種類
+                        0,   // 単価を数値0として設定
                         record["日勤_夜勤"].value,
-                        '', '', '',
                         Number(record["単価調整_支払_"]?.value || 0),
                         record["作業員検索"].value
                     ]);
@@ -147,32 +146,31 @@
                 paymentSheet = workbook.addWorksheet('支払い通知書');
             }
             
-            const customerName = record["顧客名"].value;
-            const postalCode = record["郵便番号"].value;
-            const address = record["住所"].value;
-            const buildingName = record["ビル名"]?.value || '';
-            const tel = record["tel"].value;
-            const fax = record["fax"]?.value || '';
-            const payment_date = record["payment_date"].value;
-            // const serial_number = record["支払い管理番号"].value;
-            // const payment_cicle = record["支払いサイクル"].value;
-            // const payment_deadline = record["支払い期限"].value;
-            const end_date = record["終了日"].value;
+            const Name = record["person_name"].value;
+            const company = record["company_name"].value;
+            const bank_code = record["銀行コード"].value;
+            const bank_name = record["銀行名"].value;
+            const account_number = record["口座番号"].value;
+            const account_name = record["口座名義"].value;
+            const branch_name = record["支店名"].value;
+            const branch_code = record["支店番号"].value;
+            const account_type = record["口座種別"].value;
+            const tel = record["固定番号_作業員"].value;
+            const postalCode = record["郵便番号_作業員"].value;
+            const address_work = record["住所_作業員"].value;
+            const buildingName = record["建物名_作業員"].value;
             
-            paymentSheet.getCell('C2').value = customerName;
+            paymentSheet.getCell('C2').value = Name;
             paymentSheet.getCell('C5').value = postalCode;
-            paymentSheet.getCell('C6').value = address;
             paymentSheet.getCell('C7').value = buildingName;
-            paymentSheet.getCell('C8').value = tel;
-            paymentSheet.getCell('C9').value = fax;
-            paymentSheet.getCell('I3').value = payment_date;
-            // paymentSheet.getCell('I2').value = serial_number;
-            // paymentSheet.getCell('J40').value = Number(payment_cicle);
-            paymentSheet.getCell('I40').value = payment_date;
-            paymentSheet.getCell('H40').value = end_date;
-            // const dateValue = new Date(payment_deadline);
-            // paymentSheet.getCell('C41').value = dateValue;
-            paymentSheet.getCell("C41").numFmt = '[$-ja-JP]ggge年m月d日';
+            paymentSheet.getCell('C6').value = address_work;
+            paymentSheet.getCell('C8').value = tel;  
+            paymentSheet.getCell('C40').value = bank_name;
+            paymentSheet.getCell('C41').value = branch_name;
+            paymentSheet.getCell('C42').value = account_number;
+            paymentSheet.getCell('C43').value = account_name;
+            paymentSheet.getCell('E41').value = branch_code;
+            paymentSheet.getCell('E42').value = account_type;
             
             return workbook;
         } catch (error) {
