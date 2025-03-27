@@ -75,7 +75,6 @@
             "早出時間_請求",
             "人工数_請求",
             "取引種別",
-            // 経費関連列を追加
             "経費種類",
             "請求経費",
             "金額_経費",
@@ -95,8 +94,8 @@
                         record["レコード番号"].value,
                         new Date(record["作業日"].value),
                         record["現場名"].value,
-                        record["顧客名"].value,
                         record["職種_実績_請求"].value,
+                        record["顧客名"].value,
                         record["郵便番号"].value,
                         record["住所"].value,
                         record["tel"].value,
@@ -108,8 +107,8 @@
                         Number(record["早出時間_請求"].value),
                         Number(record["人工数_請求"].value),
                         record["取引種別"].value,
-                        expense.value["経費種類_支払い"]?.value || '',
-                        Number(expense.value["単価_実績_支払"]?.value || 0),
+                        expense.value["経費種類"]?.value || '',
+                        expense.value["請求経費"]?.value || '',
                         Number(expense.value["金額_経費"]?.value || 0),
                         record["日勤_夜勤"].value,
                         Number(record["単価調整_請求"]?.value || 0)
@@ -121,8 +120,8 @@
                     record["レコード番号"].value,
                     new Date(record["作業日"].value),
                     record["現場名"].value,
-                    record["顧客名"].value,
                     record["職種_実績_請求"].value,
+                    record["顧客名"].value,
                     record["郵便番号"].value,
                     record["住所"].value,
                     record["tel"].value,
@@ -134,8 +133,10 @@
                     Number(record["早出時間_請求"].value),
                     Number(record["人工数_請求"].value),
                     record["取引種別"].value,
+                    '',
+                    '',
+                    '',
                     record["日勤_夜勤"].value,
-                    '', '', '',
                     Number(record["単価調整_請求"]?.value || 0)
                 ]);
             }

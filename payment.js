@@ -37,7 +37,8 @@
         "取引種別",
         "日勤_夜勤",
         "単価調整_支払_",
-        "作業員検索"
+        "作業員検索",
+        "計算式結果"
     ];
 
     // シート1へのデータ書き込み関数
@@ -70,17 +71,20 @@
                 "単価_実績_支払",
                 "日勤_夜勤",
                 "単価調整_支払_",  
-                "作業員検索"
+                "作業員検索",
+                "計算式結果"
             ];
             
             worksheet.addRow(headers);
+            
+            let rowIndex = 2; // ヘッダー行が1行目なので、データは2行目から始まる
             
             records.forEach(record => {
                 const expensesTable = record["経費_支払い"].value || [];
                 
                 if (expensesTable.length > 0) {
                     expensesTable.forEach(expense => {
-                        worksheet.addRow([
+                        const dataRow = [
                             record["レコード番号"].value,
                             new Date(record["作業日"].value),
                             record["現場名"].value,
@@ -98,14 +102,25 @@
                             Number(record["人工数_支払"].value),
                             record["取引種別"].value,
                             expense.value["経費種類_支払い"]?.value || '',
-                            Number(expense.value["単価_実績_支払"]?.value || 0), // falseではなく数値を設定
+                            Number(expense.value["単価_実績_支払"]?.value || 0),
                             record["日勤_夜勤"].value,
                             Number(record["単価調整_支払_"]?.value || 0),
                             record["作業員検索"].value
-                        ]);
+                        ];
+                        
+                        worksheet.addRow(dataRow);
+                        
+                        // W列にフォーミュラを設定
+                        const formulaCell = worksheet.getCell(`W${rowIndex}`);
+                        formulaCell.value = {
+                            formula: `=J${rowIndex}/8*(M${rowIndex}+N${rowIndex})*1.25`,
+                            date1904: false
+                        };
+                        
+                        rowIndex++;
                     });
                 } else {
-                    worksheet.addRow([
+                    const dataRow = [
                         record["レコード番号"].value,
                         new Date(record["作業日"].value),
                         record["現場名"].value,
@@ -127,7 +142,18 @@
                         record["日勤_夜勤"].value,
                         Number(record["単価調整_支払_"]?.value || 0),
                         record["作業員検索"].value
-                    ]);
+                    ];
+                    
+                    worksheet.addRow(dataRow);
+                    
+                    // W列にフォーミュラを設定
+                    const formulaCell = worksheet.getCell(`W${rowIndex}`);
+                    formulaCell.value = {
+                        formula: `=J${rowIndex}/8*(M${rowIndex}+N${rowIndex})*1.25`,
+                        date1904: false
+                    };
+                    
+                    rowIndex++;
                 }
             });
             
@@ -137,6 +163,8 @@
             throw error;
         }
     }
+
+    
 
     // 支払い通知書シートへのデータ書き込み関数
     async function writePaymentSheet(workbook, record) {
