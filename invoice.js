@@ -1121,21 +1121,9 @@
     }
   }
   
-  // キントーンのレコード詳細表示イベントに応答
-  kintone.events.on('app.record.detail.show', function(event) {
-    // out_categoryが「請求書」でない場合は処理を終了
-    if (event.record["out_category"].value !== "請求書・常用") {
-      return;
-    }
-
-    // 既にボタンが存在する場合は処理を終了
-    if (document.getElementById('export_excel_button')) return;
-    
-    const button = document.createElement('button');
-    button.id = 'export_excel_button';
-    button.innerText = '請求書出力';
+  // ボタンのスタイル設定を関数化
+  function setButtonStyle(button, isPayment = false) {
     button.style.margin = '10px';
-    button.style.backgroundColor = '#2196F3'; // 青色に変更
     button.style.color = 'white';
     button.style.border = 'none';
     button.style.padding = '8px 16px';
@@ -1145,42 +1133,99 @@
     button.style.fontWeight = 'bold';
     button.style.transition = 'all 0.3s ease';
     button.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-    
-    // ホバー効果
-    button.onmouseover = function() {
-        this.style.backgroundColor = '#1976D2';
-        this.style.transform = 'translateY(-1px)';
-        this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-    };
-    
-    button.onmouseout = function() {
-        this.style.backgroundColor = '#2196F3';
-        this.style.transform = 'translateY(0)';
-        this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-    };
 
-    button.onclick = async function() {
-        try {
-            const record = event.record;
-            const fileName = `（請求書）${record["顧客名"].value}_${record["開始日"].value}.xlsx`;
-            
-            debugLog('テンプレートファイルの取得を試みます');
-            const templateFile = await getTemplateFile(31, 6);
-            
-            debugLog('Excelデータの書き込みを試みます');
-            const excelBuffer = await generateExcelReport(record, templateFile);
-            
-            debugLog('ファイルダウンロードを試みます', { fileName });
-            await downloadExcelFile(excelBuffer, fileName);
-            
-            debugLog('処理が正常に完了しました');
-            alert("Excelファイルの出力が完了しました。");
-        } catch (error) {
-            debugLog('エラーが発生しました:', error);
-            alert("処理中にエラーが発生しました。\\n管理者にご連絡ください。");
+    if (isPayment) {
+        // 支払い通知書用の緑系カラー
+        button.style.backgroundColor = '#4CAF50';
+        button.onmouseover = function() {
+            this.style.backgroundColor = '#45a049';
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+        };
+        button.onmouseout = function() {
+            this.style.backgroundColor = '#4CAF50';
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+        };
+    } else {
+        // 請求書用の青系カラー
+        button.style.backgroundColor = '#2196F3';
+        button.onmouseover = function() {
+            this.style.backgroundColor = '#1976D2';
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+        };
+        button.onmouseout = function() {
+            this.style.backgroundColor = '#2196F3';
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+        };
+    }
+  }
+
+  // キントーンのレコード詳細表示イベントに応答
+  kintone.events.on('app.record.detail.show', function(event) {
+    try {
+        // 既存のボタンを削除
+        const existingButton = document.getElementById('excel_export_button');
+        if (existingButton) {
+            existingButton.remove();
         }
-    };
-    
-    kintone.app.record.getHeaderMenuSpaceElement().appendChild(button);
+
+        const record = event.record;
+        const outCategory = record.out_category.value;
+
+        // out_categoryが未設定の場合は処理を終了
+        if (!outCategory) {
+            return;
+        }
+
+        const button = document.createElement('button');
+        button.id = 'excel_export_button';
+
+        // out_categoryに応じてボタンの設定を変更
+        if (outCategory === '支払い通知書') {
+            button.innerText = '支払い通知書出力';
+            setButtonStyle(button, true);  // 緑系カラー
+        } else if (outCategory === '請求書・常用') {
+            button.innerText = '請求書出力';
+            setButtonStyle(button, false);  // 青系カラー
+        } else {
+            return; // その他のカテゴリーの場合は処理を終了
+        }
+
+        button.onclick = async function() {
+            try {
+                let fileName;
+                let templateFile;
+
+                if (outCategory === '支払い通知書') {
+                    fileName = `（支払い通知書）${record["顧客名"].value}_${record["開始日"].value}.xlsx`;
+                    debugLog('支払い通知書テンプレートファイルの取得を試みます');
+                    templateFile = await getTemplateFile(31, 7);
+                } else {
+                    fileName = `（請求書）${record["顧客名"].value}_${record["開始日"].value}.xlsx`;
+                    debugLog('請求書テンプレートファイルの取得を試みます');
+                    templateFile = await getTemplateFile(31, 6);
+                }
+
+                debugLog('Excelデータの書き込みを試みます');
+                const excelBuffer = await generateExcelReport(record, templateFile);
+
+                debugLog('ファイルダウンロードを試みます', { fileName });
+                await downloadExcelFile(excelBuffer, fileName);
+
+                debugLog('処理が正常に完了しました');
+                alert(`${button.innerText}が完了しました。`);
+            } catch (error) {
+                debugLog('エラーが発生しました:', error);
+                alert("処理中にエラーが発生しました。\n管理者にご連絡ください。");
+            }
+        };
+
+        kintone.app.record.getHeaderMenuSpaceElement().appendChild(button);
+    } catch (error) {
+        debugLog('イベントハンドラでエラーが発生しました:', error);
+    }
   });
   })();
